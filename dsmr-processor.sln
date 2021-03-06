@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		SECURITY.md = SECURITY.md
 	EndProjectSection
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SensateIoT.SmartEnergy.Dsmr.Processor.Database", "SensateIoT.SmartEnergy.Dsmr.Processor.Database\SensateIoT.SmartEnergy.Dsmr.Processor.Database.sqlproj", "{A4CA9024-13B5-4784-8225-0FAAF9107A13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,6 +30,12 @@ Global
 		{F1DDA1D3-0EEF-44CB-B3FE-D8521987CFE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1DDA1D3-0EEF-44CB-B3FE-D8521987CFE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1DDA1D3-0EEF-44CB-B3FE-D8521987CFE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4CA9024-13B5-4784-8225-0FAAF9107A13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4CA9024-13B5-4784-8225-0FAAF9107A13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4CA9024-13B5-4784-8225-0FAAF9107A13}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{A4CA9024-13B5-4784-8225-0FAAF9107A13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4CA9024-13B5-4784-8225-0FAAF9107A13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4CA9024-13B5-4784-8225-0FAAF9107A13}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
