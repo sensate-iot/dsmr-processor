@@ -71,6 +71,8 @@
     <Build Include="dbo\Tables\SensorMapping.sql" />
     <Build Include="dbo\Stored Procedures\DsmrProcessor_FinalizeBatch.sql" />
     <Build Include="Security\db_processor.sql" />
+    <Build Include="dbo\Stored Procedures\DsmrProcessor_InsertDataPoint.sql" />
+    <Build Include="dbo\Stored Procedures\DsmrProcessor_SelectAllSensorMappings.sql" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

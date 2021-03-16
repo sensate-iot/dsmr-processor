@@ -1,5 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[DsmrProcessor_SelectSensorMapping]
-	@sensorId NVARCHAR(24)
+﻿CREATE PROCEDURE [dbo].[DsmrProcessor_SelectAllSensorMappings]
 AS
 BEGIN
 	SELECT [SensorMapping].[Id],
@@ -7,5 +6,4 @@ BEGIN
 	       [SensorMapping].[GasSensorId],
 	       [SensorMapping].[EnvironmentSensorId]
 	FROM [dbo].[SensorMapping]
-	WHERE [SensorMapping].[PowerSensorId] = @sensorId
 END

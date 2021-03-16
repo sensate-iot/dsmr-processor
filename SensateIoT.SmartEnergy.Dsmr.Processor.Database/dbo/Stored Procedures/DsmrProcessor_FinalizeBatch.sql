@@ -1,6 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[DsmrProcessor_FinalizeBatch]
-	@sensorId int,
-	@count int,
+	@sensorId INT,
+	@count INT,
 	@start DATETIME,
 	@end   DATETIME,
 	@timestamp DATETIME

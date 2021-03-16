@@ -20,6 +20,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SensateIoT.SmartEnergy.Dsmr.Processor.Database", "SensateIoT.SmartEnergy.Dsmr.Processor.Database\SensateIoT.SmartEnergy.Dsmr.Processor.Database.sqlproj", "{A4CA9024-13B5-4784-8225-0FAAF9107A13}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SensateIoT.SmartEnergy.Dsmr.Processor.Common", "SensateIoT.SmartEnergy.Dsmr.Processor.Common\SensateIoT.SmartEnergy.Dsmr.Processor.Common.csproj", "{DAA90E86-96B3-4319-B403-C7A80E710306}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SensateIoT.SmartEnergy.Dsmr.Processor.Data", "SensateIoT.SmartEnergy.Dsmr.Processor.Data\SensateIoT.SmartEnergy.Dsmr.Processor.Data.csproj", "{168B80AE-5C4C-40CE-BEDD-09DA6147A44C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess", "SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess\SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.csproj", "{50049BF7-B5AB-46D4-8EED-D724A45DB426}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +42,18 @@ Global
 		{A4CA9024-13B5-4784-8225-0FAAF9107A13}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4CA9024-13B5-4784-8225-0FAAF9107A13}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A4CA9024-13B5-4784-8225-0FAAF9107A13}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{DAA90E86-96B3-4319-B403-C7A80E710306}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAA90E86-96B3-4319-B403-C7A80E710306}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAA90E86-96B3-4319-B403-C7A80E710306}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAA90E86-96B3-4319-B403-C7A80E710306}.Release|Any CPU.Build.0 = Release|Any CPU
+		{168B80AE-5C4C-40CE-BEDD-09DA6147A44C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{168B80AE-5C4C-40CE-BEDD-09DA6147A44C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{168B80AE-5C4C-40CE-BEDD-09DA6147A44C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{168B80AE-5C4C-40CE-BEDD-09DA6147A44C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50049BF7-B5AB-46D4-8EED-D724A45DB426}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50049BF7-B5AB-46D4-8EED-D724A45DB426}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50049BF7-B5AB-46D4-8EED-D724A45DB426}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50049BF7-B5AB-46D4-8EED-D724A45DB426}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

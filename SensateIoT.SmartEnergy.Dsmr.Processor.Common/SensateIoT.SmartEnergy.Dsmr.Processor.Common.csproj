@@ -4,17 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F1DDA1D3-0EEF-44CB-B3FE-D8521987CFE2}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>SensateIoT.SmartEnergy.Dsmr.Processor.Service</RootNamespace>
-    <AssemblyName>SensateIoT.SmartEnergy.Dsmr.Processor.Service</AssemblyName>
+    <ProjectGuid>{DAA90E86-96B3-4319-B403-C7A80E710306}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SensateIoT.SmartEnergy.Dsmr.Processor.Common</RootNamespace>
+    <AssemblyName>SensateIoT.SmartEnergy.Dsmr.Processor.Common</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -36,9 +34,10 @@
     <Reference Include="log4net, Version=2.0.12.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.12\lib\net45\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
-	<Reference Include="System.ServiceProcess" />
-	<Reference Include="System.ServiceModel" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
@@ -50,23 +49,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Application\AppHost.cs" />
-    <Compile Include="Application\Program.cs" />
+    <Compile Include="Abstract\IDataClient.cs" />
+    <Compile Include="Abstract\IProcessingService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\DsmrProcessorService.cs" />
-    <Compile Include="Services\WindowsService.cs" />
+    <Compile Include="Services\DataReloadService.cs" />
+    <Compile Include="Services\FileDataClient.cs" />
+    <Compile Include="Services\ProcessingService.cs" />
+    <Compile Include="Services\TimedBackgroundService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SensateIoT.SmartEnergy.Dsmr.Processor.Common\SensateIoT.SmartEnergy.Dsmr.Processor.Common.csproj">
-      <Project>{daa90e86-96b3-4319-b403-c7a80e710306}</Project>
-      <Name>SensateIoT.SmartEnergy.Dsmr.Processor.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess\SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.csproj">
-      <Project>{50049BF7-B5AB-46D4-8EED-D724A45DB426}</Project>
+      <Project>{50049bf7-b5ab-46d4-8eed-d724a45db426}</Project>
       <Name>SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess</Name>
     </ProjectReference>
     <ProjectReference Include="..\SensateIoT.SmartEnergy.Dsmr.Processor.Data\SensateIoT.SmartEnergy.Dsmr.Processor.Data.csproj">
@@ -74,6 +67,8 @@
       <Name>SensateIoT.SmartEnergy.Dsmr.Processor.Data</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
