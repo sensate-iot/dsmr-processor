@@ -73,6 +73,7 @@
     <Build Include="Security\db_processor.sql" />
     <Build Include="dbo\Stored Procedures\DsmrProcessor_InsertDataPoint.sql" />
     <Build Include="dbo\Stored Procedures\DsmrProcessor_SelectAllSensorMappings.sql" />
+    <Build Include="dbo\Stored Procedures\DsmrProcessor_SelectLastProcessedBySensorId.sql" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

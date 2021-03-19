@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
-
+using SensateIoT.SmartEnergy.Dsmr.Processor.Data.DTO;
 using SensateIoT.SmartEnergy.Dsmr.Processor.Data.Models;
 
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Abstract

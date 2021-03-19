@@ -8,5 +8,6 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Data.DTO
 		public string SensorId { get; set; }
 		public DateTime Timestamp { get; set; }
 		public IDictionary<string, MeasurementValue> Data { get; set; }
+		public Location Location { get; set; }
 	}
 }

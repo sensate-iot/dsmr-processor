@@ -2,10 +2,9 @@
 	@sensorId NVARCHAR(24)
 AS
 BEGIN
-	SELECT [SensorMapping].[Id],
-	       [SensorMapping].[PowerSensorId],
-	       [SensorMapping].[GasSensorId],
-	       [SensorMapping].[EnvironmentSensorId]
-	FROM [dbo].[SensorMapping]
-	WHERE [SensorMapping].[PowerSensorId] = @sensorId
+	SELECT [PowerSensorId],
+	       [GasSensorId],
+	       [EnvironmentSensorId]
+	FROM [dbo].[SensorMapping] m
+	WHERE [PowerSensorId] = @sensorId
 END

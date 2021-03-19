@@ -11,7 +11,7 @@ using SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Repositories;
 
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 {
-	public class DsmrProcessorService
+	public class DsmrProcessorService : IDisposable
 	{
 		private static readonly ILog logger = LogManager.GetLogger(nameof(DsmrProcessorService));
 
@@ -58,9 +58,8 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 
 		private void InternalStart()
 		{
-			this.m_processor = new ProcessingService(new SensorMappingRepository(ConnectionString));
+			this.m_processor = new ProcessingService(new SensorMappingRepository(ConnectionString), new ProcessingHistoryRepository(ConnectionString));
 			this.m_timers.Add(new DataReloadService(this.m_processor, 
-			                                        new SensorMappingRepository(ConnectionString), 
 			                                        TimeSpan.Zero, 
 			                                        TimeSpan.FromSeconds(60)));
 		}
@@ -75,6 +74,15 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 		private async Task InternalRunAsync(CancellationToken ct)
 		{
 			await Task.Delay(5000, ct);
+		}
+
+		public void Dispose()
+		{
+			foreach(var timedBackgroundService in this.m_timers) {
+				timedBackgroundService.Dispose();
+			}
+
+			this.m_processor.Dispose();
 		}
 	}
 }
