@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
+using log4net;
 using SensateIoT.SmartEnergy.Dsmr.Processor.Common.Abstract;
 using SensateIoT.SmartEnergy.Dsmr.Processor.Data.DTO;
 using SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Abstract;
@@ -11,6 +11,8 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 {
 	public sealed class ProcessingService : IProcessingService
 	{
+		private static readonly ILog logger = LogManager.GetLogger(nameof(ProcessingService));
+
 		private readonly ISensorMappingRepository m_sensorMappings;
 		private IList<SensorMapping> m_sensors;
 		private readonly IProcessingHistoryRepository m_history;
@@ -42,13 +44,18 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 		{
 			IEnumerable<string> sensorIds;
 
+			logger.Debug("Starting processing of sensors.");
+
 			lock(this.m_lock) {
-				sensorIds = this.m_sensors.Select(x => x.PowerSensorId);
+				Task.Delay(1000, ct).GetAwaiter().GetResult();
 			}
+
+			logger.Debug("Finished processing cycle.");
 		}
 
 		public void Dispose()
 		{
+			this.m_history.Dispose();
 			this.m_sensorMappings.Dispose();
 		}
 	}

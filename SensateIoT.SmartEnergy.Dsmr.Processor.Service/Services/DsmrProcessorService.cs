@@ -18,12 +18,14 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 		private Thread m_serviceThread;
 		private readonly IList<TimedBackgroundService> m_timers;
 		private IProcessingService m_processor;
+		private TimeSpan m_timeout;
 
-	    private const string ConnectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;;Initial Catalog=DsmrProcessing;Integrated Security=True;";
+		private const string ConnectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;;Initial Catalog=DsmrProcessing;Integrated Security=True;";
 
 		public DsmrProcessorService()
 		{
 			this.m_timers = new List<TimedBackgroundService>();
+			this.m_timeout = TimeSpan.FromSeconds(30);
 		}
 
 		public void Start(CancellationToken ct)
@@ -73,7 +75,10 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 
 		private async Task InternalRunAsync(CancellationToken ct)
 		{
-			await Task.Delay(5000, ct);
+			do {
+				await this.m_processor.ProcessAsync(ct).ConfigureAwait(false);
+				await Task.Delay(this.m_timeout, ct).ConfigureAwait(false);
+			} while(!ct.IsCancellationRequested);
 		}
 
 		public void Dispose()

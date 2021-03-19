@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+
 using SensateIoT.SmartEnergy.Dsmr.Processor.Data.DTO;
 
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Abstract
 {
-	public interface IProcessingHistoryRepository
+	public interface IProcessingHistoryRepository : IDisposable
 	{
 		Task<ProcessingTimestamp> GetLastProcessingTimestamp(string sensorId);
 	}
