@@ -7,6 +7,8 @@ using log4net;
 
 using SensateIoT.SmartEnergy.Dsmr.Processor.Common.Abstract;
 using SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services;
+using SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Abstract;
+using SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Clocks;
 using SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Repositories;
 
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
@@ -18,14 +20,16 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 		private Thread m_serviceThread;
 		private readonly IList<TimedBackgroundService> m_timers;
 		private IProcessingService m_processor;
-		private TimeSpan m_timeout;
+		private readonly TimeSpan m_timeout;
+		private ISystemClock m_clock;
 
 		private const string ConnectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;;Initial Catalog=DsmrProcessing;Integrated Security=True;";
 
 		public DsmrProcessorService()
 		{
 			this.m_timers = new List<TimedBackgroundService>();
-			this.m_timeout = TimeSpan.FromSeconds(30);
+			this.m_timeout = TimeSpan.FromSeconds(10);
+			this.m_clock = new DebugSystemClock(new DateTime(2021, 3, 13, 12, 0, 0, 0, DateTimeKind.Utc));
 		}
 
 		public void Start(CancellationToken ct)
@@ -60,7 +64,10 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 
 		private void InternalStart()
 		{
-			this.m_processor = new ProcessingService(new SensorMappingRepository(ConnectionString), new ProcessingHistoryRepository(ConnectionString));
+			this.m_processor = new ProcessingService(new SensorMappingRepository(ConnectionString), 
+			                                         new ProcessingHistoryRepository(ConnectionString, this.m_clock),
+			                                         new FileDataClient("C:\\Users\\miche\\Documents\\Sensate\\Development\\data"),
+			                                         this.m_clock);
 			this.m_timers.Add(new DataReloadService(this.m_processor, 
 			                                        TimeSpan.Zero, 
 			                                        TimeSpan.FromSeconds(60)));
@@ -76,7 +83,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 		private async Task InternalRunAsync(CancellationToken ct)
 		{
 			do {
-				await this.m_processor.ProcessAsync(ct).ConfigureAwait(false);
+				this.m_processor.Process(ct);
 				await Task.Delay(this.m_timeout, ct).ConfigureAwait(false);
 			} while(!ct.IsCancellationRequested);
 		}

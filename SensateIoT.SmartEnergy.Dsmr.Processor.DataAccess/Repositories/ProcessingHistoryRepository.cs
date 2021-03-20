@@ -11,8 +11,11 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Repositories
 	{
 		private const string DsmrProcessor_SelectLastProcessedBySensorId = "DsmrProcessor_SelectLastProcessedBySensorId";
 
-		public ProcessingHistoryRepository(string connection) : base(new SqlConnection(connection))
+		private readonly ISystemClock m_clock;
+
+		public ProcessingHistoryRepository(string connection, ISystemClock clock) : base(new SqlConnection(connection))
 		{
+			this.m_clock = clock;
 		}
 
 		public async Task<ProcessingTimestamp> GetLastProcessingTimestamp(string sensorId)
@@ -21,8 +24,10 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Repositories
 				"@sensorId", sensorId).ConfigureAwait(false);
 
 			if(result == null) {
+				var now = this.m_clock.GetCurrentTime();
+
 				result = new ProcessingTimestamp {
-					End = DateTime.MinValue,
+					End = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc),
 					SensorId = sensorId,
 					Start = DateTime.MinValue
 				};
