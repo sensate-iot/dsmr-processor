@@ -7,6 +7,9 @@
 	@gasUsage NUMERIC(38, 12),
 	@gasFlow NUMERIC(38, 12),
 	@oat NUMERIC(38, 12),
+	@temperature NUMERIC(38, 12),
+	@pressure NUMERIC(38, 12),
+	@rh NUMERIC(38, 12),
 	@date DATETIME
 AS
 BEGIN
@@ -19,6 +22,9 @@ BEGIN
 		[GasUsage],
 		[GasFlow],
 		[OutsideAirTemperature],
+		[Temperature],
+		[Pressure],
+		[RH],
 		[Timestamp]
 	) VALUES (
 		@sensorId,
@@ -29,6 +35,9 @@ BEGIN
 		@gasUsage,
 		@gasFlow,
 		@oat,
+		@temperature,
+		@pressure,
+		@rh,
 		@date
 	);
 END

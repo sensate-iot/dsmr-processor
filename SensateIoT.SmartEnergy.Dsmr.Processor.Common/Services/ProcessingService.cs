@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using log4net;
 
 using SensateIoT.SmartEnergy.Dsmr.Processor.Common.Abstract;
+using SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic;
 using SensateIoT.SmartEnergy.Dsmr.Processor.Data.DTO;
 using SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Abstract;
 
@@ -23,6 +24,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 		private readonly object m_lock;
 		private readonly IDataClient m_client;
 		private readonly ISystemClock m_clock;
+
 
 		public ProcessingService(ISensorMappingRepository repo,
 		                         IProcessingHistoryRepository history,
@@ -73,26 +75,28 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 			var now = this.m_clock.GetCurrentTime();
 			var threshold = mapping.LastProcessed.Add(Interval);
 			var end = roundDown(now, Interval);
-			IEnumerable<Measurement> gasData = null;
-			IEnumerable<Measurement> envData = null;
 
 			if(threshold > now) {
 				return;
 			}
 
-			var pwrTask = this.m_client.GetRange(mapping.PowerSensorId, mapping.LastProcessed, end, ct);
+			var pwrData = await this.m_client.GetRange(mapping.PowerSensorId, mapping.LastProcessed, end, ct)
+				.ConfigureAwait(false);
+			var resultSet = DataCalculator.ComputePowerAverages(pwrData);
+
 
 			if(mapping.EnvironmentSensorId != null) {
 				var envTask = this.m_client.GetRange(mapping.EnvironmentSensorId, mapping.LastProcessed, end, ct);
-				envData = await envTask.ConfigureAwait(false);
+				var envData = await envTask.ConfigureAwait(false);
+				DataCalculator.ComputeEnvironmentAverages(resultSet, envData);
 			}
 
 			if(mapping.GasSensorId != null) {
 				var gasTask = this.m_client.GetRange(mapping.GasSensorId, mapping.LastProcessed, end, ct);
-				gasData = await gasTask.ConfigureAwait(false);
+				var gasData = await gasTask.ConfigureAwait(false);
+				DataCalculator.ComputeGasAverages(resultSet, gasData);
 			}
 
-			var pwrData = await pwrTask.ConfigureAwait(false);
 		}
 
 		private static DateTime roundDown(DateTime dt, TimeSpan span)

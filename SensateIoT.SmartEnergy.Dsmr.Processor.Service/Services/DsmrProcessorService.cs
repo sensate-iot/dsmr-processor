@@ -7,9 +7,11 @@ using log4net;
 
 using SensateIoT.SmartEnergy.Dsmr.Processor.Common.Abstract;
 using SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services;
+using SensateIoT.SmartEnergy.Dsmr.Processor.Data.Settings;
 using SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Abstract;
 using SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Clocks;
 using SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Repositories;
+using SensateIoT.SmartEnergy.Dsmr.Processor.Service.Application;
 
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 {
@@ -21,15 +23,13 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 		private readonly IList<TimedBackgroundService> m_timers;
 		private IProcessingService m_processor;
 		private readonly TimeSpan m_timeout;
-		private ISystemClock m_clock;
-
-		private const string ConnectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;;Initial Catalog=DsmrProcessing;Integrated Security=True;";
+		private readonly AppConfig m_config;
 
 		public DsmrProcessorService()
 		{
 			this.m_timers = new List<TimedBackgroundService>();
 			this.m_timeout = TimeSpan.FromSeconds(10);
-			this.m_clock = new DebugSystemClock(new DateTime(2021, 3, 13, 12, 0, 0, 0, DateTimeKind.Utc));
+			this.m_config = ConfigurationLoader.LoadConfiguration();
 		}
 
 		public void Start(CancellationToken ct)
@@ -62,12 +62,30 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 			logger.Warn("DSMR processor service stopped.");
 		}
 
+		private IDataClient createDataClient()
+		{
+			if(this.m_config.Mode == AppMode.Debug) {
+				return new FileDataClient(this.m_config.DebugSettings.DataDirectory);
+			}
+
+			throw new NotImplementedException("Normal data client builder not implemented.");
+		}
+
+		private ISystemClock createClock()
+		{
+			if(this.m_config.Mode == AppMode.Debug) {
+				return new DebugSystemClock(this.m_config.DebugSettings.Clock);
+			}
+
+			throw new NotImplementedException("Normal system clock builder not implemented.");
+		}
+
 		private void InternalStart()
 		{
-			this.m_processor = new ProcessingService(new SensorMappingRepository(ConnectionString), 
-			                                         new ProcessingHistoryRepository(ConnectionString, this.m_clock),
-			                                         new FileDataClient("C:\\Users\\miche\\Documents\\Sensate\\Development\\data"),
-			                                         this.m_clock);
+			this.m_processor = new ProcessingService(new SensorMappingRepository(this.m_config.DsmrProcessingDb), 
+			                                         new ProcessingHistoryRepository(this.m_config.DsmrProcessingDb, this.createClock()),
+			                                         this.createDataClient(),
+			                                         this.createClock());
 			this.m_timers.Add(new DataReloadService(this.m_processor, 
 			                                        TimeSpan.Zero, 
 			                                        TimeSpan.FromSeconds(60)));

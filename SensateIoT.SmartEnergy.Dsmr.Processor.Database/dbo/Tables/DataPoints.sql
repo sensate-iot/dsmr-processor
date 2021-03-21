@@ -9,6 +9,9 @@
 	[GasUsage]					NUMERIC(38, 6)  NULL,
 	[GasFlow]					NUMERIC(38, 6)  NULL,
 	[OutsideAirTemperature]		NUMERIC(38, 6)  NOT NULL,
+	[Temperature]				NUMERIC(38, 6),
+	[Pressure]					NUMERIC(38, 6),
+	[RH]						NUMERIC(38, 6),
 	[Timestamp]					DATETIME		NOT NULL DEFAULT(GETDATE())
 
 	CONSTRAINT [PK_DataPoints] PRIMARY KEY NONCLUSTERED ([Id] ASC),
@@ -16,4 +19,3 @@
 		ON UPDATE CASCADE,
 	INDEX [IX_DataPointsSensorId] NONCLUSTERED ([SensorId])
 )
-

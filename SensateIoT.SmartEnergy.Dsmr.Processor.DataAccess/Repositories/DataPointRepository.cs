@@ -23,10 +23,13 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Repositories
 				"@powerUsage", dp.PowerUsage,
 				"@powerProduction", dp.PowerProduction,
 				"@energyUsage", dp.EnergyUsage,
-				"@energyProduction", dp.PowerProduction,
+				"@energyProduction", dp.EnergyProduction,
 				"@gasUsage", dp.GasUsage,
 				"@gasFlow", dp.GasFlow,
 				"@oat", dp.OutsideAirTemperature,
+				"@temperature", dp.Temperature,
+				"@pressure", dp.Pressure,
+				"@rh", dp.RelativeHumidity,
 				"@date", dp.Timestamp
 			).ConfigureAwait(false);
 		}
