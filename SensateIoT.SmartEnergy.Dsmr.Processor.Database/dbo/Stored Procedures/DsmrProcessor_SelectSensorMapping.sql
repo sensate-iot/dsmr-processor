@@ -2,7 +2,8 @@
 	@sensorId NVARCHAR(24)
 AS
 BEGIN
-	SELECT [PowerSensorId],
+	SELECT [Id],
+	       [PowerSensorId],
 	       [GasSensorId],
 	       [EnvironmentSensorId]
 	FROM [dbo].[SensorMapping] m

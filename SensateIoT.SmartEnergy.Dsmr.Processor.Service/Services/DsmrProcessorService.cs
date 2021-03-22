@@ -83,6 +83,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 		private void InternalStart()
 		{
 			this.m_processor = new ProcessingService(new SensorMappingRepository(this.m_config.DsmrProcessingDb), 
+													 new DataPointRepository(this.m_config.DsmrProcessingDb), 
 			                                         new ProcessingHistoryRepository(this.m_config.DsmrProcessingDb, this.createClock()),
 			                                         this.createDataClient(),
 			                                         this.createClock());

@@ -19,7 +19,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 		private const string GasFlow = "GasFlow";
 		private const string Temperature = "temperature";
 		private const string Pressure = "pressure";
-		private const string RelativeHumidity = "RH";
+		private const string RelativeHumidity = "rh";
 
 		public static void ComputeEnvironmentAverages(IDictionary<DateTime, DataPoint> output, IEnumerable<Measurement> measurements)
 		{
@@ -31,8 +31,6 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 				Measurements = x.ToList()
 			});
 
-			var datapoints = new SortedDictionary<DateTime, DataPoint>();
-
 			foreach(var group in groups) {
 				if(!output.TryGetValue(group.Key.Timestamp, out var dp)) {
 					continue;
@@ -43,9 +41,9 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 				var pressure = 0M;
 
 				foreach(var measurement in group.Measurements) {
-					temperature += measurement.Data[InstantaneousPowerProduction].Value;
-					rh = measurement.Data[InstantaneousPowerUsage].Value;
-					pressure = measurement.Data[InstantaneousPowerUsage].Value;
+					temperature += measurement.Data[Temperature].Value;
+					rh += measurement.Data[RelativeHumidity].Value;
+					pressure += measurement.Data[Pressure].Value;
 				}
 
 				temperature /= group.Measurements.Count;
@@ -55,6 +53,9 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 				dp.RelativeHumidity = rh;
 				dp.Pressure = pressure;
 				dp.Temperature = temperature;
+
+				// TODO: remove hardcoded
+				dp.OutsideAirTemperature = 7.2M;
 			}
 		}
 
@@ -82,7 +83,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 			}
 		}
 
-		public static IDictionary<DateTime, DataPoint> ComputePowerAverages(IEnumerable<Measurement> measurements)
+		public static IDictionary<DateTime, DataPoint> ComputePowerAverages(SensorMapping mapping, IEnumerable<Measurement> measurements)
 		{
 			var groups = measurements.GroupBy(g => new {
 				Timestamp = new DateTime(g.Timestamp.Year, g.Timestamp.Month, g.Timestamp.Day, g.Timestamp.Hour,
@@ -120,6 +121,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 					EnergyProduction = energyProduced,
 					EnergyUsage = energyUsed,
 					Timestamp = group.Key.Timestamp,
+					SensorId = mapping.SensorId
 				});
 			}
 

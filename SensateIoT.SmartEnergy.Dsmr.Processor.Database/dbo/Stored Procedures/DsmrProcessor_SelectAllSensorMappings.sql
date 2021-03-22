@@ -1,7 +1,8 @@
 ﻿CREATE PROCEDURE [dbo].[DsmrProcessor_SelectAllSensorMappings]
 AS
 BEGIN
-	SELECT [PowerSensorId],
+	SELECT [Id],
+		   [PowerSensorId],
 	       [GasSensorId],
 	       [EnvironmentSensorId]
 	FROM [dbo].[SensorMapping] m
