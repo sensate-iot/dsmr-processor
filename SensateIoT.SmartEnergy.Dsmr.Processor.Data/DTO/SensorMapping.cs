@@ -6,7 +6,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Data.DTO
 	[UsedImplicitly]
 	public class SensorMapping
 	{
-		public int SensorId { get; set; }
+		public int Id { get; set; }
 		public string PowerSensorId { get; set; }
 		public string GasSensorId { get; set; }
 		public string EnvironmentSensorId { get; set; }

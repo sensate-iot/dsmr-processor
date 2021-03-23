@@ -12,6 +12,8 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Application
 			var mode = ConfigurationManager.AppSettings["mode"];
 			var conf = new AppConfig { Mode = AppMode.Normal };
 
+			conf.OpenWeatherMapApiKey = ConfigurationManager.AppSettings["openWeatherMapApiKey"];
+
 			if(mode == "debug") {
 				conf.Mode = AppMode.Debug;
 				loadDebugConfiguration(conf);

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using log4net;
 
 using SensateIoT.SmartEnergy.Dsmr.Processor.Common.Abstract;
+using SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic;
 using SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services;
 using SensateIoT.SmartEnergy.Dsmr.Processor.Data.Settings;
 using SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Abstract;
@@ -82,11 +83,13 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 
 		private void InternalStart()
 		{
-			this.m_processor = new ProcessingService(new SensorMappingRepository(this.m_config.DsmrProcessingDb), 
-													 new DataPointRepository(this.m_config.DsmrProcessingDb), 
-			                                         new ProcessingHistoryRepository(this.m_config.DsmrProcessingDb, this.createClock()),
-			                                         this.createDataClient(),
-			                                         this.createClock());
+			var clock = this.createClock();
+			var cache = new WeatherCache(clock);
+
+			this.m_processor = new ProcessingService(new SensorMappingRepository(this.m_config.DsmrProcessingDb),
+			                                         new DataPointRepository(this.m_config.DsmrProcessingDb),
+			                                         new ProcessingHistoryRepository( this.m_config.DsmrProcessingDb, clock), this.createDataClient(), this.createClock(),
+			                                         new WeatherService(cache, new OpenWeatherMapClient(), this.m_config));
 			this.m_timers.Add(new DataReloadService(this.m_processor, 
 			                                        TimeSpan.Zero, 
 			                                        TimeSpan.FromSeconds(60)));

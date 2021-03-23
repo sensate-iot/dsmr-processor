@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+
 using Newtonsoft.Json;
+
 using SensateIoT.SmartEnergy.Dsmr.Processor.Common.Abstract;
 using SensateIoT.SmartEnergy.Dsmr.Processor.Data.DTO.OpenWeatherMap;
 
@@ -22,9 +25,9 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 			this.m_client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 		}
 
-		public async Task<Weather> GetCurrentWeatherAsync(QueryParameters @params)
+		public async Task<Weather> GetCurrentWeatherAsync(QueryParameters @params, CancellationToken ct)
 		{
-			var builder = new UriBuilder(BaseUri + "/data/2.5/weather");
+			var builder = new UriBuilder($"{BaseUri}/data/2.5/weather");
 			var query = HttpUtility.ParseQueryString(builder.Query);
 
 			query["appid"] = @params.Key;
@@ -33,7 +36,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 			query["units"] = @params.UnitSystem;
 
 			builder.Query = query.ToString();
-			var result = await this.m_client.GetAsync(builder.Uri).ConfigureAwait(false);
+			var result = await this.m_client.GetAsync(builder.Uri, ct).ConfigureAwait(false);
 			var json = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
 
 			return JsonConvert.DeserializeObject<Weather>(json);

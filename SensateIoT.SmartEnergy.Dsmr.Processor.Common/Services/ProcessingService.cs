@@ -9,7 +9,6 @@ using log4net;
 using SensateIoT.SmartEnergy.Dsmr.Processor.Common.Abstract;
 using SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic;
 using SensateIoT.SmartEnergy.Dsmr.Processor.Data.DTO;
-using SensateIoT.SmartEnergy.Dsmr.Processor.Data.DTO.OpenWeatherMap;
 using SensateIoT.SmartEnergy.Dsmr.Processor.Data.Models;
 using SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Abstract;
 
@@ -27,21 +26,21 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 		private readonly object m_lock;
 		private readonly IDataClient m_client;
 		private readonly ISystemClock m_clock;
-		private readonly IOpenWeatherMapClient m_openWeather;
-
+		private readonly IWeatherService m_openWeather;
 
 		public ProcessingService(ISensorMappingRepository repo,
-								 IDataPointRepository dataRepo,
+		                         IDataPointRepository dataRepo,
 		                         IProcessingHistoryRepository history,
 		                         IDataClient client,
-		                         ISystemClock clock)
+		                         ISystemClock clock,
+								 IWeatherService service)
 		{
 			this.m_sensorMappings = repo;
 			this.m_history = history;
 			this.m_dataRepo = dataRepo;
 			this.m_client = client;
 			this.m_clock = clock;
-			this.m_openWeather = new OpenWeatherMapClient();
+			this.m_openWeather = service;
 			this.m_lock = new object();
 		}
 
@@ -90,40 +89,76 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 				return;
 			}
 
-			var pwrData = await this.m_client.GetRange(mapping.PowerSensorId, mapping.LastProcessed, end, ct)
-				.ConfigureAwait(false);
-			var resultSet = DataCalculator.ComputePowerAverages(mapping, pwrData);
-
-			if(mapping.EnvironmentSensorId != null) {
-				logger.Info("Processing environment data.");
-				var envTask = this.m_client.GetRange(mapping.EnvironmentSensorId, mapping.LastProcessed, end, ct);
-				var envData = await envTask.ConfigureAwait(false);
-				DataCalculator.ComputeEnvironmentAverages(resultSet, envData);
-				logger.Debug("Finished processing environment data.");
-			}
-
-			if(mapping.GasSensorId != null) {
-				logger.Info("Processing gas data.");
-				var gasTask = this.m_client.GetRange(mapping.GasSensorId, mapping.LastProcessed, end, ct);
-				var gasData = await gasTask.ConfigureAwait(false);
-				DataCalculator.ComputeGasAverages(resultSet, gasData);
-				logger.Debug("Finished processing gas data.");
-			}
+			var resultSet = await this.processPowerData(mapping, end, ct).ConfigureAwait(false);
+			await this.processEnvData(mapping, resultSet, end, ct).ConfigureAwait(false);
+			await this.processGasData(mapping, resultSet, end, ct).ConfigureAwait(false);
 
 			logger.Info($"Finished processing {mapping.PowerSensorId}");
 			await this.storeDataPoints(resultSet, ct).ConfigureAwait(false);
 		}
 
+		private async Task<IDictionary<DateTime, DataPoint>> processPowerData(SensorMapping mapping, DateTime end, CancellationToken ct)
+		{
+			var rawPowerData = await this.m_client.GetRange(mapping.PowerSensorId, mapping.LastProcessed, end, ct)
+				.ConfigureAwait(false);
+			var pwrData = rawPowerData.ToList();
+			var resultSet = DataCalculator.ComputePowerAverages(mapping, pwrData);
+
+			var span = pwrData[0].Timestamp - this.m_clock.GetCurrentTime();
+
+			if(span > TimeSpan.FromHours(3)) {
+				return resultSet;
+			}
+
+			// Get the longitude and latitude. Assume these are all the same
+			// for other measurements (.. a smart meter is quite unlikely
+			// to move).
+			var first = pwrData[0].Location;
+			await this.lookupWeather(mapping, resultSet, first, ct).ConfigureAwait(false);
+
+			return resultSet;
+		}
+
+		private async Task lookupWeather(SensorMapping mapping, IDictionary<DateTime, DataPoint> resultSet, Location location, CancellationToken ct)
+		{
+			var lookup = new WeatherLookup {
+				Longitude = location.Longitude,
+				Latitude = location.Latitude,
+				SensorId = mapping.Id
+			};
+
+			var result = await this.m_openWeather.LookupAsync(lookup, ct).ConfigureAwait(false);
+
+			foreach(var keyValuePair in resultSet) {
+				keyValuePair.Value.OutsideAirTemperature = Convert.ToDecimal(result.Temperature);
+			}
+		}
+
+		private async Task processEnvData(SensorMapping mapping, IDictionary<DateTime, DataPoint> data, DateTime end, CancellationToken ct)
+		{
+			if(mapping.EnvironmentSensorId != null) {
+				logger.Info("Processing environment data.");
+				var envTask = this.m_client.GetRange(mapping.EnvironmentSensorId, mapping.LastProcessed, end, ct);
+				var envData = await envTask.ConfigureAwait(false);
+				DataCalculator.ComputeEnvironmentAverages(data, envData);
+				logger.Debug("Finished processing environment data.");
+			}
+		}
+
+		private async Task processGasData(SensorMapping mapping, IDictionary<DateTime, DataPoint> data, DateTime end, CancellationToken ct)
+		{
+			if(mapping.GasSensorId != null) {
+				logger.Info("Processing gas data.");
+				var gasTask = this.m_client.GetRange(mapping.GasSensorId, mapping.LastProcessed, end, ct);
+				var gasData = await gasTask.ConfigureAwait(false);
+				DataCalculator.ComputeGasAverages(data, gasData);
+				logger.Debug("Finished processing gas data.");
+			}
+		}
+
 		private async Task storeDataPoints(IDictionary<DateTime, DataPoint> measurements, CancellationToken ct)
 		{
 			var datapoints = measurements.Select(x => x.Value);
-			var result = await this.m_openWeather.GetCurrentWeatherAsync(new QueryParameters {
-				Key = "",
-				Latitude = 51.5009,
-				Longitude = 4.2819,
-				UnitSystem = "metric"
-			}).ConfigureAwait(false);
-
 			await this.m_dataRepo.CreateBulkDataPointsAsync(datapoints, ct).ConfigureAwait(false);
 		}
 

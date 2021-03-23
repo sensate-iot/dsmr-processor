@@ -4,7 +4,7 @@
 	{
 		public AppMode Mode { get; set; }
 		public DebugSettings DebugSettings { get; set; }
-
 		public string DsmrProcessingDb { get; set; }
+		public string OpenWeatherMapApiKey { get; set; }
 	}
 }

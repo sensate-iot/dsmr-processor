@@ -6,8 +6,8 @@ using SensateIoT.SmartEnergy.Dsmr.Processor.Data.DTO.OpenWeatherMap;
 
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Abstract
 {
-	public interface IOpenWeatherMapClient : IDisposable
+	public interface IWeatherService : IDisposable
 	{
-		Task<Weather> GetCurrentWeatherAsync(QueryParameters @params, CancellationToken ct = default);
+		Task<WeatherData> LookupAsync(WeatherLookup lookup, CancellationToken ct);
 	}
 }

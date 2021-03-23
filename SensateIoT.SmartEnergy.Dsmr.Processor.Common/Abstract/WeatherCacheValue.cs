@@ -3,8 +3,9 @@ using SensateIoT.SmartEnergy.Dsmr.Processor.Data.DTO.OpenWeatherMap;
 
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Abstract
 {
-	public interface IWeatherCache : IDisposable
+	public class WeatherCacheValue
 	{
-		WeatherData this[int sensorId] { get; set; }
+		public DateTime Timeout { get; set; }
+		public WeatherData Value { get; set; }
 	}
 }

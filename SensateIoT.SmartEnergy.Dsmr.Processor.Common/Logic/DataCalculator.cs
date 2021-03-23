@@ -121,7 +121,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 					EnergyProduction = energyProduced,
 					EnergyUsage = energyUsed,
 					Timestamp = group.Key.Timestamp,
-					SensorId = mapping.SensorId
+					SensorId = mapping.Id
 				});
 			}
 

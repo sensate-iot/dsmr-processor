@@ -63,6 +63,7 @@
     <Folder Include="Security" />
     <Folder Include="dbo\Stored Procedures" />
     <Folder Include="dbo\Tables" />
+    <Folder Include="dbo\Types" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Stored Procedures\DsmrProcessor_SelectSensorMapping.sql" />
@@ -74,6 +75,8 @@
     <Build Include="dbo\Stored Procedures\DsmrProcessor_InsertDataPoint.sql" />
     <Build Include="dbo\Stored Procedures\DsmrProcessor_SelectAllSensorMappings.sql" />
     <Build Include="dbo\Stored Procedures\DsmrProcessor_SelectLastProcessedBySensorId.sql" />
+    <Build Include="dbo\Types\DataPoint.sql" />
+    <Build Include="dbo\Stored Procedures\DsmrProcessor_BulkInsertDataPoints.sql" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

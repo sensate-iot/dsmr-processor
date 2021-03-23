@@ -6,7 +6,7 @@
 	[EnergyProduction]			NUMERIC(38, 6)  NOT NULL,
 	[GasUsage]					NUMERIC(38, 6)  NULL,
 	[GasFlow]					NUMERIC(38, 6)  NULL,
-	[OutsideAirTemperature]		NUMERIC(38, 6)  NOT NULL,
+	[OutsideAirTemperature]		NUMERIC(38, 6)  NULL,
 	[Temperature]				NUMERIC(38, 6)  NULL,
 	[Pressure]					NUMERIC(38, 6)  NULL,
 	[RH]						NUMERIC(38, 6)  NULL,
