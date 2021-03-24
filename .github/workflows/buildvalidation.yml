@@ -31,7 +31,7 @@ jobs:
         run: msbuild -version
 
       - name: Restore packages
-        run: nuget restore dsmr-database.sln
+        run: nuget restore dsmr-processor.sln
 
       - name: Build 
-        run: msbuild.exe dsmr-database.sln /nologo /nr:false /p:configuration="Debug"
+        run: msbuild.exe dsmr-processor.sln /nologo /nr:false /p:configuration="Debug"
