@@ -12,7 +12,7 @@ using SensateIoT.SmartEnergy.Dsmr.Processor.Data.DTO.OpenWeatherMap;
 
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 {
-	public class OpenWeatherMapClient : IOpenWeatherMapClient
+	public sealed class OpenWeatherMapClient : IOpenWeatherMapClient
 	{
 		private readonly HttpClient m_client;
 		private const string BaseUri = "https://api.openweathermap.org";
@@ -44,7 +44,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 
 		public void Dispose()
 		{
-			this.m_client?.Dispose();
+			this.m_client.Dispose();
 		}
 	}
 }

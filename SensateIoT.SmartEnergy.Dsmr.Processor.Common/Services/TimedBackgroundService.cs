@@ -31,7 +31,9 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 		protected virtual void Dispose(bool disposing)
 		{
 			if(disposing) {
-				this.m_timer?.Dispose();
+				this.m_source.Cancel();
+				this.m_timer.Dispose();
+				this.m_source.Dispose();
 			}
 		}
 

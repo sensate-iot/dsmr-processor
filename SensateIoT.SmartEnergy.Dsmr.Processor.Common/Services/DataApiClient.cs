@@ -12,7 +12,7 @@ using SensateIoT.SmartEnergy.Dsmr.Processor.Data.Settings;
 
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 {
-	public class DataApiClient : IDataClient
+	public sealed class DataApiClient : IDataClient
 	{
 		private readonly HttpClient m_client;
 		private readonly AppConfig m_config;
@@ -45,6 +45,11 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 
 			// TODO: error handling
 			return JsonConvert.DeserializeObject<IEnumerable<Measurement>>(json);
+		}
+
+		public void Dispose()
+		{
+			this.m_client.Dispose();
 		}
 	}
 }
