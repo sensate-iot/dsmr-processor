@@ -23,7 +23,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 				this.m_processor.Start(this.m_source.Token);
 			} catch(Exception ex) {
 				logger.Fatal("Unable to parse configuration file. Fatalling.", ex);
-				throw ex;
+				throw;
 			}
 		}
 
@@ -35,7 +35,8 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 
 		public void Dispose()
 		{
-			this.m_source?.Dispose();
+			this.m_source.Dispose();
+			this.m_processor.Dispose();
 		}
 	}
 }

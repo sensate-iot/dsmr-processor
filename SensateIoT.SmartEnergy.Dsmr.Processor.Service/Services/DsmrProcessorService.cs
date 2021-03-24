@@ -16,7 +16,7 @@ using SensateIoT.SmartEnergy.Dsmr.Processor.Service.Application;
 
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 {
-	public class DsmrProcessorService : IDisposable
+	public sealed class DsmrProcessorService : IDisposable
 	{
 		private static readonly ILog logger = LogManager.GetLogger(nameof(DsmrProcessorService));
 
