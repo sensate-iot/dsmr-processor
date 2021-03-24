@@ -15,25 +15,6 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Application
 			logger.Warn("Starting DSMR processing service.");
 
 			DateTimeTypeHandler.SetupDateTimeHandlers();
-			/*var repo = new DataPointRepository(ConnectionString);
-			var dp = new DataPoint {
-				SensorId = 1,
-				PowerProduction = 1354.3615M,
-				OutsideAirTemperature = 12.543M,
-				EnergyProduction = 3432.36M,
-				EnergyUsage = 1234.634M,
-				GasFlow = 43.232M,
-				GasUsage = 1.000M,
-				PowerUsage = 98.2345M,
-				Timestamp = new DateTime(2021, 3, 15, 20, 1, 0, 0)
-			};
-
-	        repo.CreateDataPointAsync(dp, CancellationToken.None).GetAwaiter().GetResult();*/
-			/*var fileClient = new FileDataClient("C:\\Users\\miche\\Documents\\Sensate\\Development\\data");
-			var start = new DateTime(2021, 3, 13, 13, 0, 0, DateTimeKind.Utc);
-			var end = start.AddMinutes(5);
-			var result = fileClient.GetRange("60496aa759001279d9859952", start, end, CancellationToken.None)
-				.GetAwaiter().GetResult();*/
 
 			if(Environment.UserInteractive) {
 				StartInteractive();
@@ -42,7 +23,6 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Application
 					//ServiceBase.Run(svc);
 				//}
 			}
-			Console.ReadLine();
         }
 
         private static void StartInteractive()

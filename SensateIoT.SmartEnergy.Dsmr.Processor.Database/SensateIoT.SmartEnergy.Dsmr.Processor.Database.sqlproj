@@ -24,7 +24,7 @@
     <TargetDatabaseSet>True</TargetDatabaseSet>
     <PageVerify>CHECKSUM</PageVerify>
     <Recovery>SIMPLE</Recovery>
-    <DacVersion>0.0.1.0</DacVersion>
+    <DacVersion>0.1.0.0</DacVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
