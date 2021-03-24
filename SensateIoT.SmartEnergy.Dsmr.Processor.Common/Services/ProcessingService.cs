@@ -109,7 +109,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 			var resultSet = await this.processPowerData(mapping, end, ct).ConfigureAwait(false);
 
 			if(resultSet == null) {
-				logger.Info("Stopped processing. No E-data received.");
+				logger.Warn("Stopped processing. No E-data received.");
 				return null;
 			}
 
@@ -123,12 +123,12 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 		{
 			var rawPowerData = await this.m_client.GetRangeAsync(mapping.PowerSensorId, mapping.LastProcessed, end, ct)
 				.ConfigureAwait(false);
+			var pwrData = rawPowerData?.ToList();
 
-			if(rawPowerData == null) {
+			if(pwrData == null || pwrData.Count <= 0) {
 				return null;
 			}
 
-			var pwrData = rawPowerData.ToList();
 			var resultSet = DataCalculator.ComputePowerAverages(mapping, pwrData);
 
 			var span = pwrData[0].Timestamp - this.m_clock.GetCurrentTime();

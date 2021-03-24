@@ -43,14 +43,14 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 			var json = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
 
 			if(!result.IsSuccessStatusCode) {
-				logger.Warn($"Received an error from the Data API (HTTP {result.StatusCode:D}. Response: {json}");
+				logger.Error($"Received an error from the Data API (HTTP {result.StatusCode:D}. Response: {json}");
 				return null;
 			}
 
 			try {
 				data = JsonConvert.DeserializeObject<IEnumerable<Measurement>>(json);
 			} catch(SerializationException ex) {
-				logger.Warn($"Unable to parse Data API response: {json}.", ex);
+				logger.Error($"Unable to parse Data API response: {json}.", ex);
 				data = null;
 			}
 
