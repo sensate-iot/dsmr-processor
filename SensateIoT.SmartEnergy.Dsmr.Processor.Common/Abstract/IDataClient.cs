@@ -9,6 +9,6 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Abstract
 {
 	public interface IDataClient
 	{
-		Task<IEnumerable<Measurement>> GetRange(string sensorId, DateTime start, DateTime end, CancellationToken ct);
+		Task<IEnumerable<Measurement>> GetRangeAsync(string sensorId, DateTime start, DateTime end, CancellationToken ct);
 	}
 }

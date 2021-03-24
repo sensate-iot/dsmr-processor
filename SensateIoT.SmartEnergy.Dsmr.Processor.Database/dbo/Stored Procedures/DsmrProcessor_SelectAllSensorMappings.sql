@@ -6,4 +6,5 @@ BEGIN
 	       [GasSensorId],
 	       [EnvironmentSensorId]
 	FROM [dbo].[SensorMapping] m
+	WHERE [m].[Enabled] = 1
 END

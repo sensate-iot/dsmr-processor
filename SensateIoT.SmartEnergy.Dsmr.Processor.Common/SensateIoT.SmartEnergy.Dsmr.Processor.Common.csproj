@@ -53,13 +53,14 @@
     <Compile Include="Abstract\IProcessingService.cs" />
     <Compile Include="Abstract\IWeatherCache.cs" />
     <Compile Include="Abstract\IWeatherService.cs" />
-    <Compile Include="Abstract\WeatherCacheValue.cs" />
-    <Compile Include="Abstract\WeatherLookup.cs" />
+    <Compile Include="DTO\WeatherCacheValue.cs" />
+    <Compile Include="DTO\WeatherLookup.cs" />
     <Compile Include="Logic\DataCalculator.cs" />
     <Compile Include="Abstract\IOpenWeatherMapClient.cs" />
     <Compile Include="Logic\OpenWeatherMapClient.cs" />
     <Compile Include="Logic\WeatherCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\DataApiClient.cs" />
     <Compile Include="Services\DataReloadService.cs" />
     <Compile Include="Services\FileDataClient.cs" />
     <Compile Include="Services\ProcessingService.cs" />

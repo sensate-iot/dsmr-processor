@@ -16,6 +16,8 @@
 
 	CONSTRAINT [PK_DataPoints] PRIMARY KEY NONCLUSTERED ([Id] ASC),
 	CONSTRAINT [FK_DataPoints_SensorMapping] FOREIGN KEY ([SensorId]) REFERENCES [SensorMapping] ([Id])
-		ON UPDATE CASCADE,
-	INDEX [IX_DataPointsSensorId] NONCLUSTERED ([SensorId])
+		ON UPDATE CASCADE
+		ON DELETE CASCADE,
+	INDEX [IX_DataPointsSensorId] NONCLUSTERED ([SensorId]),
+	INDEX [IX_DataPointsTimestamp] CLUSTERED ([Timestamp])
 )

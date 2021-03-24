@@ -80,8 +80,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Repositories
 
 			for(var idx = 0; idx < props.Length; idx++) {
 				var prop = props[idx];
-
-				row[idx] = prop.GetValue(dp);
+				row[idx] = prop.GetValue(dp) ?? DBNull.Value;
 			}
 
 			table.Rows.Add(row);

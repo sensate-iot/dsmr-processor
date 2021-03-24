@@ -10,9 +10,12 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Application
 		public static AppConfig LoadConfiguration()
 		{
 			var mode = ConfigurationManager.AppSettings["mode"];
-			var conf = new AppConfig { Mode = AppMode.Normal };
-
-			conf.OpenWeatherMapApiKey = ConfigurationManager.AppSettings["openWeatherMapApiKey"];
+			var conf = new AppConfig {
+				Mode = AppMode.Normal,
+				OpenWeatherMapApiKey = ConfigurationManager.AppSettings["openWeatherMapApiKey"],
+				SensateIoTApiKey = ConfigurationManager.AppSettings["sensateIoTApiKey"],
+				SensateIoTDataApiBase = ConfigurationManager.AppSettings["dataApiBase"]
+			};
 
 			if(mode == "debug") {
 				conf.Mode = AppMode.Debug;

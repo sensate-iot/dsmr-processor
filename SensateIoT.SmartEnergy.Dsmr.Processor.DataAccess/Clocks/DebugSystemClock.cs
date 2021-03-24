@@ -5,7 +5,7 @@ using SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Abstract;
 
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Clocks
 {
-	public class DebugSystemClock : ISystemClock, IDisposable
+	public class DebugSystemClock : ISystemClock
 	{
 		private readonly Timer m_timer;
 		private DateTime m_currentTime;

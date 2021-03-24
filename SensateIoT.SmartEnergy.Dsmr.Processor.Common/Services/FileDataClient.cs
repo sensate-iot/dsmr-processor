@@ -25,7 +25,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 			this.m_directory = directory;
 		}
 
-		public Task<IEnumerable<Measurement>> GetRange(string sensorId, DateTime start, DateTime end, CancellationToken ct)
+		public Task<IEnumerable<Measurement>> GetRangeAsync(string sensorId, DateTime start, DateTime end, CancellationToken ct)
 		{
 			var path = $"{this.m_directory}{Path.DirectorySeparatorChar}{sensorId}.json";
 			var data = File.ReadAllText(path);

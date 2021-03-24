@@ -82,7 +82,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 			var threshold = mapping.LastProcessed.Add(Interval);
 			var end = roundDown(now, Interval);
 
-			logger.Info($"Processing {mapping.PowerSensorId}.");
+			logger.Info($"Processing {mapping.Id}.");
 
 			if(threshold > now) {
 				logger.Info("Stopped processing. Timestamp threshold past current timestamp.");
@@ -93,13 +93,19 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 			await this.processEnvData(mapping, resultSet, end, ct).ConfigureAwait(false);
 			await this.processGasData(mapping, resultSet, end, ct).ConfigureAwait(false);
 
-			logger.Info($"Finished processing {mapping.PowerSensorId}");
+			logger.Debug("Finished calculating averages. Starting storage process.");
 			await this.storeDataPoints(resultSet, ct).ConfigureAwait(false);
+			await this.m_history.CreateProcessingTimestamp(mapping.Id, resultSet.Count, mapping.LastProcessed, end, ct)
+				.ConfigureAwait(false);
+
+			mapping.LastProcessed = end;
+
+			logger.Info($"Finished processing {mapping.Id}.");
 		}
 
 		private async Task<IDictionary<DateTime, DataPoint>> processPowerData(SensorMapping mapping, DateTime end, CancellationToken ct)
 		{
-			var rawPowerData = await this.m_client.GetRange(mapping.PowerSensorId, mapping.LastProcessed, end, ct)
+			var rawPowerData = await this.m_client.GetRangeAsync(mapping.PowerSensorId, mapping.LastProcessed, end, ct)
 				.ConfigureAwait(false);
 			var pwrData = rawPowerData.ToList();
 			var resultSet = DataCalculator.ComputePowerAverages(mapping, pwrData);
@@ -138,7 +144,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 		{
 			if(mapping.EnvironmentSensorId != null) {
 				logger.Info("Processing environment data.");
-				var envTask = this.m_client.GetRange(mapping.EnvironmentSensorId, mapping.LastProcessed, end, ct);
+				var envTask = this.m_client.GetRangeAsync(mapping.EnvironmentSensorId, mapping.LastProcessed, end, ct);
 				var envData = await envTask.ConfigureAwait(false);
 				DataCalculator.ComputeEnvironmentAverages(data, envData);
 				logger.Debug("Finished processing environment data.");
@@ -149,7 +155,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 		{
 			if(mapping.GasSensorId != null) {
 				logger.Info("Processing gas data.");
-				var gasTask = this.m_client.GetRange(mapping.GasSensorId, mapping.LastProcessed, end, ct);
+				var gasTask = this.m_client.GetRangeAsync(mapping.GasSensorId, mapping.LastProcessed, end, ct);
 				var gasData = await gasTask.ConfigureAwait(false);
 				DataCalculator.ComputeGasAverages(data, gasData);
 				logger.Debug("Finished processing gas data.");

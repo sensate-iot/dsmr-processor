@@ -2,7 +2,7 @@
 
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Abstract
 {
-	public interface ISystemClock
+	public interface ISystemClock : IDisposable
 	{
 		DateTime GetCurrentTime();
 	}

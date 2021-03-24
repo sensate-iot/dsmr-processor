@@ -69,7 +69,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 				return new FileDataClient(this.m_config.DebugSettings.DataDirectory);
 			}
 
-			throw new NotImplementedException("Normal data client builder not implemented.");
+			return new DataApiClient(this.m_config);
 		}
 
 		private ISystemClock createClock()
@@ -78,7 +78,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 				return new DebugSystemClock(this.m_config.DebugSettings.Clock);
 			}
 
-			throw new NotImplementedException("Normal system clock builder not implemented.");
+			return new SystemClock();
 		}
 
 		private void InternalStart()
@@ -88,7 +88,9 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 
 			this.m_processor = new ProcessingService(new SensorMappingRepository(this.m_config.DsmrProcessingDb),
 			                                         new DataPointRepository(this.m_config.DsmrProcessingDb),
-			                                         new ProcessingHistoryRepository( this.m_config.DsmrProcessingDb, clock), this.createDataClient(), this.createClock(),
+			                                         new ProcessingHistoryRepository( this.m_config.DsmrProcessingDb, clock),
+			                                         this.createDataClient(),
+			                                         this.createClock(),
 			                                         new WeatherService(cache, new OpenWeatherMapClient(), this.m_config));
 			this.m_timers.Add(new DataReloadService(this.m_processor, 
 			                                        TimeSpan.Zero, 

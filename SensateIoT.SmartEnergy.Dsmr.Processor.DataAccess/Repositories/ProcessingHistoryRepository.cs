@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Threading;
 using System.Threading.Tasks;
 
 using SensateIoT.SmartEnergy.Dsmr.Processor.Data.DTO;
@@ -10,6 +11,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Repositories
 	public class ProcessingHistoryRepository : AbstractRepository, IProcessingHistoryRepository
 	{
 		private const string DsmrProcessor_SelectLastProcessedBySensorId = "DsmrProcessor_SelectLastProcessedBySensorId";
+		private const string DsmrProcessor_InsertProcessingTimestamp = "DsmrProcessor_InsertProcessingTimestamp";
 
 		private readonly ISystemClock m_clock;
 
@@ -34,6 +36,15 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Repositories
 			}
 
 			return result;
+		}
+
+		public async Task CreateProcessingTimestamp(int sensorId, int count, DateTime start, DateTime end, CancellationToken ct)
+		{
+			await this.ExecuteAsync(DsmrProcessor_InsertProcessingTimestamp,
+			                        "@sensorId", sensorId,
+			                        "@count", count,
+			                        "@start", start,
+			                        "@end", end).ConfigureAwait(false);
 		}
 	}
 }

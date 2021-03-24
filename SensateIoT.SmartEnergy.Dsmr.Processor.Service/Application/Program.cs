@@ -1,21 +1,20 @@
 ﻿using System;
-using System.ServiceProcess;
 
 using log4net;
-
+using SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Mappers;
 using SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services;
 
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Application
 {
     public class Program
     {
-	    private const string ConnectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;;Initial Catalog=DsmrProcessing;Integrated Security=True;";
 	    private static readonly ILog logger = LogManager.GetLogger(nameof(Program));
 
         public static void Main(string[] args)
         {
 			logger.Warn("Starting DSMR processing service.");
 
+			DateTimeTypeHandler.SetupDateTimeHandlers();
 			/*var repo = new DataPointRepository(ConnectionString);
 			var dp = new DataPoint {
 				SensorId = 1,
