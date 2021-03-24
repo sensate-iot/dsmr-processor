@@ -1,0 +1,37 @@
+name: Build validation
+on:
+  push:
+      branches:
+        - master
+        - develop
+        - feature/**
+        - release/**
+        - hotfix/**
+      tags:
+        - v*
+  pull_request:
+    branches: 
+      - master
+      - develop
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Clone source
+        uses: actions/checkout@v1
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1
+
+      - name: MSBuild Version
+        run: msbuild -version
+
+      - name: Restore packages
+        run: nuget restore dsmr-database.sln
+
+      - name: Build 
+        run: msbuild.exe dsmr-database.sln /nologo /nr:false /p:configuration="Debug"
