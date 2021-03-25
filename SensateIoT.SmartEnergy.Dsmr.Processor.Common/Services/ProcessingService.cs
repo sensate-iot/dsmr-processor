@@ -89,25 +89,46 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 				return;
 			}
 
-			var resultSet = await this.processPowerData(mapping, end, ct).ConfigureAwait(false);
-			await this.processEnvData(mapping, resultSet, end, ct).ConfigureAwait(false);
-			await this.processGasData(mapping, resultSet, end, ct).ConfigureAwait(false);
+			var resultSet = await this.computeAggregates(mapping, end, ct).ConfigureAwait(false);
+
+			if(resultSet == null) {
+				return;
+			}
 
 			logger.Debug("Finished calculating averages. Starting storage process.");
 			await this.storeDataPoints(resultSet, ct).ConfigureAwait(false);
-			await this.m_history.CreateProcessingTimestamp(mapping.Id, resultSet.Count, mapping.LastProcessed, end, ct)
-				.ConfigureAwait(false);
+			await this.m_history.CreateProcessingTimestamp(mapping.Id, resultSet.Count, mapping.LastProcessed, end, ct).ConfigureAwait(false);
 
 			mapping.LastProcessed = end;
 
 			logger.Info($"Finished processing {mapping.Id}.");
 		}
 
+		private async Task<IDictionary<DateTime, DataPoint>> computeAggregates(SensorMapping mapping, DateTime end, CancellationToken ct)
+		{
+			var resultSet = await this.processPowerData(mapping, end, ct).ConfigureAwait(false);
+
+			if(resultSet == null) {
+				logger.Warn("Stopped processing. No E-data received.");
+				return null;
+			}
+
+			await this.processEnvData(mapping, resultSet, end, ct).ConfigureAwait(false);
+			await this.processGasData(mapping, resultSet, end, ct).ConfigureAwait(false);
+
+			return resultSet;
+		}
+
 		private async Task<IDictionary<DateTime, DataPoint>> processPowerData(SensorMapping mapping, DateTime end, CancellationToken ct)
 		{
 			var rawPowerData = await this.m_client.GetRangeAsync(mapping.PowerSensorId, mapping.LastProcessed, end, ct)
 				.ConfigureAwait(false);
-			var pwrData = rawPowerData.ToList();
+			var pwrData = rawPowerData?.ToList();
+
+			if(pwrData == null || pwrData.Count <= 0) {
+				return null;
+			}
+
 			var resultSet = DataCalculator.ComputePowerAverages(mapping, pwrData);
 
 			var span = pwrData[0].Timestamp - this.m_clock.GetCurrentTime();

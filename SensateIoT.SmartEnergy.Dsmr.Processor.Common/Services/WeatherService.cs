@@ -9,7 +9,7 @@ using SensateIoT.SmartEnergy.Dsmr.Processor.Data.Settings;
 
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 {
-	public class WeatherService : IWeatherService
+	public sealed class WeatherService : IWeatherService
 	{
 		private static readonly ILog logger = LogManager.GetLogger(nameof(WeatherService));
 

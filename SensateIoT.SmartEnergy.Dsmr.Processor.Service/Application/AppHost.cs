@@ -14,7 +14,7 @@ using SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services;
 
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Application
 {
-	public class ConsoleHost
+	public sealed class ConsoleHost : IDisposable
 	{
 		private static readonly ILog logger = LogManager.GetLogger(nameof(ConsoleHost));
 
@@ -40,6 +40,12 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Application
 			this.m_service.StartService();
 			this.m_resetEvent.WaitOne();
 			this.m_service.StopService();
+		}
+
+		public void Dispose()
+		{
+			this.m_resetEvent.Dispose();
+			this.m_service.Dispose();
 		}
 	}
 }

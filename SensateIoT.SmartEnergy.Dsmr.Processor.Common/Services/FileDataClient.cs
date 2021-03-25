@@ -14,7 +14,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 	/// <summary>
 	/// File data client, used mainly for testing purposes.
 	/// </summary>
-	public class FileDataClient : IDataClient
+	public sealed class FileDataClient : IDataClient
 	{
 		private static readonly ILog logger = LogManager.GetLogger(nameof(FileDataClient));
 
@@ -39,6 +39,10 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 		private static IEnumerable<Measurement> filterResults(IEnumerable<Measurement> input, DateTime start, DateTime end)
 		{
 			return input.Where(measurement => measurement.Timestamp >= start && measurement.Timestamp <= end).ToList();
+		}
+
+		public void Dispose()
+		{
 		}
 	}
 }

@@ -7,7 +7,7 @@ using SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Abstract;
 
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 {
-	public class WeatherCache : IWeatherCache
+	public sealed class WeatherCache : IWeatherCache
 	{
 		private readonly IDictionary<int, WeatherCacheValue> m_cache;
 		private readonly ISystemClock m_clock;
@@ -20,7 +20,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 			this.m_cache = new Dictionary<int, WeatherCacheValue>();
 		}
 
-		public WeatherCache(ISystemClock clock, TimeSpan timeout)
+		private WeatherCache(ISystemClock clock, TimeSpan timeout)
 		{
 			this.m_clock = clock;
 			this.m_timeout = timeout;

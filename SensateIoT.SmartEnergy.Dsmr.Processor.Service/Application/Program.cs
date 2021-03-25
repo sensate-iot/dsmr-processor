@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.ServiceProcess;
 using log4net;
 using SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Mappers;
 using SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services;
@@ -19,9 +19,9 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Application
 			if(Environment.UserInteractive) {
 				StartInteractive();
 			} else {
-				//using(var svc = new WindowsService()) {
-					//ServiceBase.Run(svc);
-				//}
+				using(var svc = new WindowsService()) {
+					ServiceBase.Run(svc);
+				}
 			}
         }
 

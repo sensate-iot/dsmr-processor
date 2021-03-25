@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ServiceProcess;
 using System.Threading;
+
 using log4net;
 
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 {
-	public sealed class WindowsService : IDisposable
+	public sealed class WindowsService : ServiceBase
 	{
 		private static readonly ILog logger = LogManager.GetLogger(nameof(WindowsService));
 
@@ -17,25 +19,43 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 			this.m_source = new CancellationTokenSource();
 		}
 
+		protected override void OnStart(string[] args)
+		{
+			this.StartService();
+		}
+
+		protected override void OnStop()
+		{
+			this.StopService();
+		}
+
 		public void StartService()
 		{
 			try {
 				this.m_processor.Start(this.m_source.Token);
 			} catch(Exception ex) {
-				logger.Fatal("Unable to parse configuration file. Fatalling.", ex);
-				throw ex;
+				logger.Fatal("Unable to run the DSMR processor service. Fatalling.", ex);
+				throw;
 			}
 		}
 
 		public void StopService()
 		{
+			logger.Info("Stop signal received.");
 			this.m_source.Cancel();
 			this.m_processor.Stop();
 		}
 
-		public void Dispose()
+		protected override void Dispose(bool disposing)
 		{
-			this.m_source?.Dispose();
+			base.Dispose(disposing);
+
+			if(!disposing) {
+				return;
+			}
+
+			this.m_source.Dispose();
+			this.m_processor.Dispose();
 		}
 	}
 }
