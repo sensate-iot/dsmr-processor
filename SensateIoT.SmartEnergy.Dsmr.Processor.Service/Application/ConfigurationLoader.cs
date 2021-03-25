@@ -12,9 +12,9 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Application
 			var mode = ConfigurationManager.AppSettings["mode"];
 			var conf = new AppConfig {
 				Mode = AppMode.Normal,
-				OpenWeatherMapApiKey = ConfigurationManager.AppSettings["openWeatherMapApiKey"],
-				SensateIoTApiKey = ConfigurationManager.AppSettings["sensateIoTApiKey"],
-				SensateIoTDataApiBase = ConfigurationManager.AppSettings["dataApiBase"]
+				OpenWeatherMapApiKey = loadRequiredSetting("openWeatherMapApiKey"),
+				SensateIoTApiKey = loadRequiredSetting("sensateIoTApiKey"),
+				SensateIoTDataApiBase = loadRequiredSetting("dataApiBase")
 			};
 
 			if(mode == "debug") {
@@ -29,14 +29,32 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Application
 		private static void loadConnectionStrings(AppConfig conf)
 		{
 			conf.DsmrProcessingDb = ConfigurationManager.ConnectionStrings["DsmrProcessing"].ConnectionString;
+
+			if(string.IsNullOrEmpty(conf.DsmrProcessingDb)) {
+				throw new InvalidOperationException("Missing the DSMR database connection string.");
+			}
 		}
+
 
 		private static void loadDebugConfiguration(AppConfig conf)
 		{
+			var timestamp = loadRequiredSetting("debugTime");
+
 			conf.DebugSettings = new DebugSettings {
-				Clock = DateTime.Parse(ConfigurationManager.AppSettings["debugTime"]),
-				DataDirectory = ConfigurationManager.AppSettings["dataDirectory"]
+				Clock = DateTime.Parse(timestamp),
+				DataDirectory = loadRequiredSetting("dataDirectory")
 			};
+		}
+
+		private static string loadRequiredSetting(string name)
+		{
+			var result = ConfigurationManager.AppSettings[name];
+
+			if(string.IsNullOrEmpty(result)) {
+				throw new InvalidOperationException($"The configuration parameter {name} is required but not present.");
+			}
+
+			return result;
 		}
 	}
 }
