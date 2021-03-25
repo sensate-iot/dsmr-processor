@@ -2,10 +2,14 @@
 using System.Threading;
 using System.Threading.Tasks;
 
+using log4net;
+
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 {
 	public abstract class TimedBackgroundService : IDisposable
 	{
+		private static readonly ILog logger = LogManager.GetLogger(nameof(TimedBackgroundService));
+
 		private readonly Timer m_timer;
 		private readonly CancellationTokenSource m_source;
 
@@ -17,7 +21,12 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 
 		private void Invoke(object argument)
 		{
-			this.InvokeAsync(this.m_source.Token).GetAwaiter().GetResult();
+			try {
+				this.InvokeAsync(this.m_source.Token).GetAwaiter().GetResult();
+			} catch(Exception ex) {
+				logger.Fatal("Unable to executed timed background service.", ex);
+				Environment.Exit(1);
+			}
 		}
 
 		protected abstract Task InvokeAsync(CancellationToken ct);

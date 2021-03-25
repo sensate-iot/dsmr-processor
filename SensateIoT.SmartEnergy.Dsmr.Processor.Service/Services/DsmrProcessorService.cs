@@ -90,7 +90,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 			                                         new DataPointRepository(this.m_config.DsmrProcessingDb),
 			                                         new ProcessingHistoryRepository( this.m_config.DsmrProcessingDb, clock),
 			                                         this.createDataClient(),
-			                                         this.createClock(),
+													 clock,
 			                                         new WeatherService(cache, new OpenWeatherMapClient(), this.m_config));
 			this.m_timers.Add(new DataReloadService(this.m_processor, 
 			                                        TimeSpan.Zero, 
@@ -99,6 +99,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 
 		private void InternalStop()
 		{
+			logger.Debug("Stopping timer tasks.");
 			foreach(var timedBackgroundService in this.m_timers) {
 				timedBackgroundService.Stop();
 			}

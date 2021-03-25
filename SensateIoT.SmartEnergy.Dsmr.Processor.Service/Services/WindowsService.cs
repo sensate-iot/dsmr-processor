@@ -19,18 +19,29 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 			this.m_source = new CancellationTokenSource();
 		}
 
+		protected override void OnStart(string[] args)
+		{
+			this.StartService();
+		}
+
+		protected override void OnStop()
+		{
+			this.StopService();
+		}
+
 		public void StartService()
 		{
 			try {
 				this.m_processor.Start(this.m_source.Token);
 			} catch(Exception ex) {
-				logger.Fatal("Unable to parse configuration file. Fatalling.", ex);
+				logger.Fatal("Unable to run the DSMR processor service. Fatalling.", ex);
 				throw;
 			}
 		}
 
 		public void StopService()
 		{
+			logger.Info("Stop signal received.");
 			this.m_source.Cancel();
 			this.m_processor.Stop();
 		}
