@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ServiceProcess;
 using System.Threading;
+
 using log4net;
 
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 {
-	public sealed class WindowsService : IDisposable
+	public sealed class WindowsService : ServiceBase
 	{
 		private static readonly ILog logger = LogManager.GetLogger(nameof(WindowsService));
 
@@ -33,8 +35,14 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 			this.m_processor.Stop();
 		}
 
-		public void Dispose()
+		protected override void Dispose(bool disposing)
 		{
+			base.Dispose(disposing);
+
+			if(!disposing) {
+				return;
+			}
+
 			this.m_source.Dispose();
 			this.m_processor.Dispose();
 		}
