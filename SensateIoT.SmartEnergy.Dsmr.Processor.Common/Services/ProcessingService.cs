@@ -155,9 +155,14 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 			};
 
 			var result = await this.m_openWeather.LookupAsync(lookup, ct).ConfigureAwait(false);
+			decimal? oat = null;
+
+			if(result != null) {
+				oat = Convert.ToDecimal(result.Temperature);
+			}
 
 			foreach(var keyValuePair in resultSet) {
-				keyValuePair.Value.OutsideAirTemperature = Convert.ToDecimal(result.Temperature);
+				keyValuePair.Value.OutsideAirTemperature = oat;
 			}
 		}
 
