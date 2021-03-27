@@ -53,9 +53,6 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 				dp.RelativeHumidity = rh;
 				dp.Pressure = pressure;
 				dp.Temperature = temperature;
-
-				// TODO: remove hardcoded
-				dp.OutsideAirTemperature = 7.2M;
 			}
 		}
 
