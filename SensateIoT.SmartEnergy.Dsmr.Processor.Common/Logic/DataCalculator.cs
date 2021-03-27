@@ -112,8 +112,6 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 
 				production /= group.Measurements.Count;
 				consumption /= group.Measurements.Count;
-				energyUsed /= group.Measurements.Count;
-				energyProduced /= group.Measurements.Count;
 
 				datapoints.Add(group.Key.Timestamp, new DataPoint {
 					PowerProduction = production,
