@@ -35,7 +35,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 					UnitSystem = "metric",
 					Latitude = lookup.Latitude,
 					Longitude = lookup.Longitude
-				}).ConfigureAwait(false);
+				}, ct).ConfigureAwait(false);
 
 				if(result.Id == 0) {
 					logger.Warn("Unable to lookup weather.");
