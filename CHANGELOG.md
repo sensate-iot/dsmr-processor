@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Added
+- Support for the tariff column
+
+### Updated
+- Stored procedures execution statements
+- Data point model files
+
 ## [1.0.1] - 26-03-2021
 ### Added
 - Improve error handling in the weather service
