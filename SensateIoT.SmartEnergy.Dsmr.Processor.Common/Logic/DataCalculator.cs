@@ -15,6 +15,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 		private const string EnergyConsumptionTariff2 = "EnergyConsumptionTariff2";
 		private const string EnergyProductionTariff1 = "EnergyProductionTariff1";
 		private const string EnergyProductionTariff2 = "EnergyProductionTariff2";
+		private const string Tariff = "Tariff";
 		private const string GasConsumption = "GasConsumption";
 		private const string GasFlow = "GasFlow";
 		private const string Temperature = "temperature";
@@ -97,6 +98,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 				var consumption = 0M;
 				var energyUsed = 0M;
 				var energyProduced = 0M;
+				var tariff = 0M;
 
 				foreach(var measurement in group.Measurements) {
 					production += measurement.Data[InstantaneousPowerProduction].Value;
@@ -105,6 +107,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 					             measurement.Data[EnergyConsumptionTariff2].Value;
 					energyProduced = measurement.Data[EnergyProductionTariff1].Value +
 					                 measurement.Data[EnergyProductionTariff2].Value;
+					tariff = measurement.Data[Tariff].Value;
 				}
 
 				production /= group.Measurements.Count;
@@ -115,6 +118,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 					PowerUsage = consumption,
 					EnergyProduction = energyProduced,
 					EnergyUsage = energyUsed,
+					Tariff = tariff > 0M,
 					Timestamp = group.Key.Timestamp,
 					SensorId = mapping.Id
 				});

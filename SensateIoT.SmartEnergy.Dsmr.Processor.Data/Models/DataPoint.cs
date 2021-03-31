@@ -9,6 +9,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Data.Models
 		public decimal PowerProduction { get; set; }
 		public decimal EnergyUsage { get; set; }
 		public decimal EnergyProduction { get; set; }
+		public bool Tariff { get; set; }
 		public decimal? GasUsage { get; set; }
 		public decimal? GasFlow { get; set; }
 		public decimal? OutsideAirTemperature { get; set; }

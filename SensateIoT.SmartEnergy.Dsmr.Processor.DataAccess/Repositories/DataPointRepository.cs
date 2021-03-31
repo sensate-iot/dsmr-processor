@@ -30,6 +30,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Repositories
 				"@powerProduction", dp.PowerProduction,
 				"@energyUsage", dp.EnergyUsage,
 				"@energyProduction", dp.EnergyProduction,
+				"@tariff", dp.Tariff,
 				"@gasUsage", dp.GasUsage,
 				"@gasFlow", dp.GasFlow,
 				"@oat", dp.OutsideAirTemperature,
