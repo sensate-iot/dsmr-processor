@@ -119,7 +119,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 
 				if(!string.IsNullOrEmpty(mapping.EnvironmentSensorId)) {
 					await this.m_client
-						.DeleteBucketsAsync(mapping.PowerSensorId, DateTime.MinValue, lastProcessingTime, ct)
+						.DeleteBucketsAsync(mapping.EnvironmentSensorId, DateTime.MinValue, lastProcessingTime, ct)
 						.ConfigureAwait(false);
 				}
 			}
