@@ -36,6 +36,20 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 			return Task.FromResult(filterResults(measurements, start, end));
 		}
 
+		public Task DeleteBucketsAsync(string sensorId, DateTime start, DateTime end, CancellationToken ct)
+		{
+			start = createHourDateTime(start).ToUniversalTime();
+			end = createHourDateTime(end).ToUniversalTime();
+			logger.Info($"Attempting to delete measurements between {start:O} and {end:O}.");
+			logger.Info("Messages deleted!");
+			return Task.CompletedTask;
+		}
+
+		private static DateTime createHourDateTime(DateTime dt)
+		{
+			return new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 0, 0, dt.Kind);
+		}
+
 		private static IEnumerable<Measurement> filterResults(IEnumerable<Measurement> input, DateTime start, DateTime end)
 		{
 			return input.Where(measurement => measurement.Timestamp >= start && measurement.Timestamp <= end).ToList();

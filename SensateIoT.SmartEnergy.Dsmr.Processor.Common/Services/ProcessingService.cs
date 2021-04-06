@@ -99,9 +99,30 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 			await this.storeDataPoints(resultSet, ct).ConfigureAwait(false);
 			await this.m_history.CreateProcessingTimestamp(mapping.Id, resultSet.Count, mapping.LastProcessed, end, ct).ConfigureAwait(false);
 
+			await this.cleanupOldRequests(mapping, end, ct).ConfigureAwait(false);
 			mapping.LastProcessed = end;
 
 			logger.Info($"Finished processing {mapping.Id}.");
+		}
+
+		private async Task cleanupOldRequests(SensorMapping mapping, DateTime lastProcessingTime, CancellationToken ct)
+		{
+			if(mapping.LastProcessed.Hour != lastProcessingTime.Hour) {
+				await this.m_client.DeleteBucketsAsync(mapping.PowerSensorId, DateTime.MinValue, lastProcessingTime, ct)
+					.ConfigureAwait(false);
+
+				if(!string.IsNullOrEmpty(mapping.GasSensorId)) {
+					await this.m_client
+						.DeleteBucketsAsync(mapping.GasSensorId, DateTime.MinValue, lastProcessingTime, ct)
+						.ConfigureAwait(false);
+				}
+
+				if(!string.IsNullOrEmpty(mapping.EnvironmentSensorId)) {
+					await this.m_client
+						.DeleteBucketsAsync(mapping.PowerSensorId, DateTime.MinValue, lastProcessingTime, ct)
+						.ConfigureAwait(false);
+				}
+			}
 		}
 
 		private async Task<IDictionary<DateTime, DataPoint>> computeAggregates(SensorMapping mapping, DateTime end, CancellationToken ct)

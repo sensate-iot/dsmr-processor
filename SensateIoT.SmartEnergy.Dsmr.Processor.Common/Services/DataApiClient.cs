@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.Serialization;
@@ -24,6 +26,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 
 		private static readonly ILog logger = LogManager.GetLogger(nameof(DataApiClient));
 		private const string LookupPath = "/data/v1/measurements";
+		private const string DeletePath = "/data/v1/measurements";
 
 		public DataApiClient(AppConfig config)
 		{
@@ -39,7 +42,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 		{
 			IEnumerable<Measurement> data;
 
-			var result = await this.m_client.GetAsync(this.buildUri(sensorId, start, end), ct).ConfigureAwait(false);
+			var result = await this.m_client.GetAsync(this.buildLookupUri(sensorId, start, end), ct).ConfigureAwait(false);
 			var json = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
 
 			if(!result.IsSuccessStatusCode) {
@@ -57,7 +60,43 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 			return data;
 		}
 
-		private Uri buildUri(string sensorId, DateTime start, DateTime end)
+		public async Task DeleteBucketsAsync(string sensorId, DateTime start, DateTime end, CancellationToken ct)
+		{
+			start = createHourDateTime(start).ToUniversalTime();
+			end = createHourDateTime(end).ToUniversalTime();
+
+			logger.Info($"Attempting to delete measurements between {start:O} and {end:O}.");
+
+			var uri = this.buildDeleteUri(sensorId, start, end);
+			logger.Debug($"Deleting measurements using URI: {uri}");
+			var result = await this.m_client.DeleteAsync(uri, ct).ConfigureAwait(false);
+
+			if(result.StatusCode == HttpStatusCode.NoContent) {
+				logger.Info("Measurements deleted.");
+			} else {
+				logger.Warn($"Unable to delete measurements. Status code: {result.StatusCode:D}.");
+			}
+		}
+
+		private static DateTime createHourDateTime(DateTime dt)
+		{
+			return new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, 0, 0, dt.Kind);
+		}
+
+		private Uri buildDeleteUri(string sensorId, DateTime start, DateTime end)
+		{
+			var builder = new UriBuilder($"{this.m_config.SensateIoTDataApiBase}{LookupPath}");
+			var query = HttpUtility.ParseQueryString(builder.Query);
+
+			query["sensorId"] = sensorId;
+			query["bucketStart"] = start.ToString("O");
+			query["bucketEnd"] = end.ToString("O");
+			builder.Query = query.ToString();
+
+			return builder.Uri;
+		}
+
+		private Uri buildLookupUri(string sensorId, DateTime start, DateTime end)
 		{
 			var builder = new UriBuilder($"{this.m_config.SensateIoTDataApiBase}{LookupPath}");
 			var query = HttpUtility.ParseQueryString(builder.Query);
