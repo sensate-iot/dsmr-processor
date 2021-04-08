@@ -10,21 +10,15 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Repositories
 {
 	public class SensorMappingRepository : AbstractRepository, ISensorMappingRepository
 	{
-		private const string SelectSensorMappings = "DsmrProcessor_SelectSensorMapping";
-		private const string SelectAllSensorMappings = "DsmrProcessor_SelectAllSensorMappings";
+		private const string SelectAllSensorMappings = "DsmrProcessor_GetDevices";
 
 		public SensorMappingRepository(string connectionString) : base(new SqlConnection(connectionString))
 		{
 		}
 
-		public Task<SensorMapping> GetSensorMapping(string sensorId, CancellationToken ct)
+		public async Task<IEnumerable<SensorMapping>> GetAllSensorsAsync(string serviceName, CancellationToken ct = default)
 		{
-			return this.QuerySingleAsync<SensorMapping>(SelectSensorMappings, "@sensorId", sensorId);
-		}
-
-		public async Task<IEnumerable<SensorMapping>> GetAllSensorsAsync(CancellationToken ct = default)
-		{
-			return await this.QueryAsync<SensorMapping>(SelectAllSensorMappings).ConfigureAwait(false);
+			return await this.QueryAsync<SensorMapping>(SelectAllSensorMappings, "@processorServiceName", serviceName).ConfigureAwait(false);
 		}
 	}
 }
