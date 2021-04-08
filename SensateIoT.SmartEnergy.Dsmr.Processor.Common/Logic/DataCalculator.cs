@@ -5,6 +5,8 @@ using System.Linq;
 using SensateIoT.SmartEnergy.Dsmr.Processor.Data.DTO;
 using SensateIoT.SmartEnergy.Dsmr.Processor.Data.Models;
 
+using SensorMapping = SensateIoT.SmartEnergy.Dsmr.Processor.Data.DTO.SensorMapping;
+
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 {
 	public static class DataCalculator

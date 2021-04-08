@@ -20,7 +20,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Repositories
 			this.m_clock = clock;
 		}
 
-		public async Task<ProcessingTimestamp> GetLastProcessingTimestamp(string sensorId)
+		public async Task<ProcessingTimestamp> GetLastProcessingTimestamp(int sensorId)
 		{
 			var result = await this.QuerySingleAsync<ProcessingTimestamp>(DsmrProcessor_SelectLastProcessedBySensorId,
 				"@sensorId", sensorId).ConfigureAwait(false);

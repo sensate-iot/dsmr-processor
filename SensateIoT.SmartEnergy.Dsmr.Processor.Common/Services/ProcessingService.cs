@@ -12,6 +12,8 @@ using SensateIoT.SmartEnergy.Dsmr.Processor.Data.DTO;
 using SensateIoT.SmartEnergy.Dsmr.Processor.Data.Models;
 using SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Abstract;
 
+using SensorMapping = SensateIoT.SmartEnergy.Dsmr.Processor.Data.DTO.SensorMapping;
+
 namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 {
 	public sealed class ProcessingService : IProcessingService
@@ -27,13 +29,15 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 		private readonly IDataClient m_client;
 		private readonly ISystemClock m_clock;
 		private readonly IWeatherService m_openWeather;
+		private readonly string m_serviceName;
 
-		public ProcessingService(ISensorMappingRepository repo,
+		public ProcessingService(string serviceName,
+		                         ISensorMappingRepository repo,
 		                         IDataPointRepository dataRepo,
 		                         IProcessingHistoryRepository history,
 		                         IDataClient client,
 		                         ISystemClock clock,
-								 IWeatherService service)
+		                         IWeatherService service)
 		{
 			this.m_sensorMappings = repo;
 			this.m_history = history;
@@ -42,15 +46,16 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 			this.m_clock = clock;
 			this.m_openWeather = service;
 			this.m_lock = new object();
+			this.m_serviceName = serviceName;
 		}
 
 		public async Task LoadSensorMappingsAsync(CancellationToken ct)
 		{
-			var rawMappings = await this.m_sensorMappings.GetAllSensorsAsync(ct).ConfigureAwait(false);
+			var rawMappings = await this.m_sensorMappings.GetAllSensorsAsync(this.m_serviceName, ct).ConfigureAwait(false);
 			var mappings = rawMappings.ToList();
 
 			foreach(var sensorMapping in mappings) {
-				var last = await this.m_history.GetLastProcessingTimestamp(sensorMapping.PowerSensorId).ConfigureAwait(false);
+				var last = await this.m_history.GetLastProcessingTimestamp(sensorMapping.Id).ConfigureAwait(false);
 				sensorMapping.LastProcessed = last.End;
 			}
 

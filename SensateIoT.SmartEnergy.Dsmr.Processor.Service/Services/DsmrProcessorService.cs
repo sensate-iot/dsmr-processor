@@ -86,9 +86,10 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Service.Services
 			var clock = this.createClock();
 			var cache = new WeatherCache(clock);
 
-			this.m_processor = new ProcessingService(new SensorMappingRepository(this.m_config.DsmrProcessingDb),
-			                                         new DataPointRepository(this.m_config.DsmrProcessingDb),
-			                                         new ProcessingHistoryRepository( this.m_config.DsmrProcessingDb, clock),
+			this.m_processor = new ProcessingService(this.m_config.ServiceName,
+			                                         new SensorMappingRepository(this.m_config.DsmrProductConnectionString),
+			                                         new DataPointRepository(this.m_config.DsmrOlapConnectionString),
+			                                         new ProcessingHistoryRepository( this.m_config.DsmrOlapConnectionString, clock),
 			                                         this.createDataClient(),
 													 clock,
 			                                         new WeatherService(cache, new OpenWeatherMapClient(), this.m_config));

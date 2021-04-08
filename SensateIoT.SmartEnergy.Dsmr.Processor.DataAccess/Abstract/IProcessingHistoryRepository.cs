@@ -8,7 +8,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Abstract
 {
 	public interface IProcessingHistoryRepository : IDisposable
 	{
-		Task<ProcessingTimestamp> GetLastProcessingTimestamp(string sensorId);
+		Task<ProcessingTimestamp> GetLastProcessingTimestamp(int sensorId);
 		Task CreateProcessingTimestamp(int sensorId, int count, DateTime start, DateTime end, CancellationToken ct);
 	}
 }
