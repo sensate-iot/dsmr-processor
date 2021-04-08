@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,7 +19,16 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Repositories
 
 		public async Task<IEnumerable<SensorMapping>> GetAllSensorsAsync(string serviceName, CancellationToken ct = default)
 		{
-			return await this.QueryAsync<SensorMapping>(SelectAllSensorMappings, "@processorServiceName", serviceName).ConfigureAwait(false);
+			var result = await this.QueryAsync<Data.Models.SensorMapping>(SelectAllSensorMappings, "@processorServiceName", serviceName)
+				.ConfigureAwait(false);
+
+			return result.Select(x => new SensorMapping {
+				EnvironmentSensorId = x.EnvironmentSensorId,
+				GasSensorId = x.GasSensorId,
+				Id = x.Id,
+				PowerSensorId = x.PowerSensorId,
+				LastProcessed = default
+			});
 		}
 	}
 }
