@@ -151,6 +151,8 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 				.ConfigureAwait(false);
 			var pwrData = rawPowerData?.ToList();
 
+			logger.Info($"Load {pwrData?.Count} datapoints.");
+
 			if(pwrData == null || pwrData.Count <= 0) {
 				return null;
 			}
