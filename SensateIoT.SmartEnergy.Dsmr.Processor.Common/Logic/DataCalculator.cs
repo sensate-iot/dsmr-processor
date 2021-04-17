@@ -104,7 +104,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 
 				foreach(var measurement in group.Measurements) {
 					production += measurement.Data[InstantaneousPowerProduction].Value;
-					consumption = measurement.Data[InstantaneousPowerUsage].Value;
+					consumption += measurement.Data[InstantaneousPowerUsage].Value;
 					energyUsed = measurement.Data[EnergyConsumptionTariff1].Value +
 					             measurement.Data[EnergyConsumptionTariff2].Value;
 					energyProduced = measurement.Data[EnergyProductionTariff1].Value +
