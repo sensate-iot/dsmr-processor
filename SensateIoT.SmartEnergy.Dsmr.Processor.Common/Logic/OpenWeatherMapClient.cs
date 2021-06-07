@@ -34,7 +34,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 			var obj = JsonConvert.DeserializeObject<Weather>(json);
 
 			if(obj?.Id == 0) {
-				logger.Warn("Unable to lookup weather!");
+				logger.Warn("City ID 0. Coordinates possibly wrong!");
 				logger.Info($"Response: {json}");
 			}
 
@@ -53,6 +53,10 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 
 			builder.Query = query.ToString();
 			var result = await this.m_client.GetAsync(builder.Uri, ct).ConfigureAwait(false);
+
+			if(!result.IsSuccessStatusCode) {
+				return null;
+			}
 
 			return await result.Content.ReadAsStringAsync().ConfigureAwait(false);
 		}
