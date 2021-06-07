@@ -29,27 +29,44 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 			var cachedValue = this.m_cache[lookup.SensorId];
 
 			if(cachedValue == null) {
-				logger.Info($"Weather data not cached for sensor {lookup.SensorId}.");
-				var result = await this.m_client.GetCurrentWeatherAsync(new QueryParameters {
-					Key = this.m_config.OpenWeatherMapApiKey,
-					UnitSystem = "metric",
-					Latitude = lookup.Latitude,
-					Longitude = lookup.Longitude
-				}, ct).ConfigureAwait(false);
+				var result = await this.getWeatherDataFromApiAsync(lookup, ct).ConfigureAwait(false);
 
-				if(result.Id == 0) {
+				if(result == null) {
 					return null;
 				}
 
-				logger.Info($"Got response from OpenWeatherMap API with ID {result.Id}.");
-
 				cachedValue = result.Data;
-				this.m_cache[lookup.SensorId] = result.Data;
 			} else {
 				logger.Info($"Using cached weather data for {lookup.SensorId}.");
 			}
 
 			return cachedValue;
+		}
+
+		private async Task<Weather> getWeatherDataFromApiAsync(WeatherLookup lookup, CancellationToken ct)
+		{
+			logger.Info($"Weather data not cached for sensor {lookup.SensorId}.");
+
+			var result = await this.m_client.GetCurrentWeatherAsync(new QueryParameters {
+				Key = this.m_config.OpenWeatherMapApiKey,
+				UnitSystem = "metric",
+				Latitude = lookup.Latitude,
+				Longitude = lookup.Longitude
+			}, ct).ConfigureAwait(false);
+
+			if(result == null) {
+				logger.Error("Weather lookup failed!");
+				return null;
+			}
+
+			logger.Info($"Got response from OpenWeatherMap API with ID {result.Id}.");
+
+
+			if(result.Id != 0) {
+				this.m_cache[lookup.SensorId] = result.Data;
+			}
+
+			return result;
 		}
 
 		public void Dispose()
