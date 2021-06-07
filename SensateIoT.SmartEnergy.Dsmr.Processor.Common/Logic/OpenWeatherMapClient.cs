@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
+using log4net;
 using Newtonsoft.Json;
 
 using SensateIoT.SmartEnergy.Dsmr.Processor.Common.Abstract;
@@ -15,6 +16,8 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 	public sealed class OpenWeatherMapClient : IOpenWeatherMapClient
 	{
 		private readonly HttpClient m_client;
+		private static ILog logger = LogManager.GetLogger(nameof(OpenWeatherMapClient));
+
 		private const string BaseUri = "https://api.openweathermap.org";
 
 		public OpenWeatherMapClient()
@@ -27,6 +30,19 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 
 		public async Task<Weather> GetCurrentWeatherAsync(QueryParameters @params, CancellationToken ct)
 		{
+			var json = await this.performLookup(@params, ct).ConfigureAwait(false);
+			var obj = JsonConvert.DeserializeObject<Weather>(json);
+
+			if(obj?.Id == 0) {
+				logger.Warn("Unable to lookup weather!");
+				logger.Info($"Response: {json}");
+			}
+
+			return obj;
+		}
+
+		private async Task<string> performLookup(QueryParameters @params, CancellationToken ct)
+		{
 			var builder = new UriBuilder($"{BaseUri}/data/2.5/weather");
 			var query = HttpUtility.ParseQueryString(builder.Query);
 
@@ -37,9 +53,8 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Logic
 
 			builder.Query = query.ToString();
 			var result = await this.m_client.GetAsync(builder.Uri, ct).ConfigureAwait(false);
-			var json = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-			return JsonConvert.DeserializeObject<Weather>(json);
+			return await result.Content.ReadAsStringAsync().ConfigureAwait(false);
 		}
 
 		public void Dispose()
