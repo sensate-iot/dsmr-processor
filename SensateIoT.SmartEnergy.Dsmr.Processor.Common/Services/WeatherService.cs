@@ -38,7 +38,6 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 				}, ct).ConfigureAwait(false);
 
 				if(result.Id == 0) {
-					logger.Warn("Unable to lookup weather.");
 					return null;
 				}
 
