@@ -22,20 +22,23 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.DataAccess.Repositories
 
 		public async Task<ProcessingTimestamp> GetLastProcessingTimestamp(int sensorId)
 		{
-			var result = await this.QuerySingleAsync<ProcessingTimestamp>(DsmrProcessor_SelectLastProcessedBySensorId,
-				"@sensorId", sensorId).ConfigureAwait(false);
+			return await this.QuerySingleAsync<ProcessingTimestamp>(
+				DsmrProcessor_SelectLastProcessedBySensorId,
+				"@sensorId",
+				sensorId
+			).ConfigureAwait(false) ?? this.createDefault(sensorId);
+		}
 
-			if(result == null) {
-				var now = this.m_clock.GetCurrentTime();
+		private ProcessingTimestamp createDefault(int id)
+		{
+			var now = this.m_clock.GetCurrentTime();
+			var start = now.AddDays(-2);
 
-				result = new ProcessingTimestamp {
-					End = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Utc),
-					SensorId = sensorId,
-					Start = DateTime.MinValue
-				};
-			}
-
-			return result;
+			return new ProcessingTimestamp {
+				End = new DateTime(start.Year, start.Month, start.Day, 0, 0, 0, DateTimeKind.Utc),
+				SensorId = id,
+				Start = DateTime.MinValue
+			};
 		}
 
 		public async Task CreateProcessingTimestamp(int sensorId, int count, DateTime start, DateTime end, CancellationToken ct)
