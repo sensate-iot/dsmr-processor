@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.3.1] - 17-04-2021
 ### Added
+- System.Runtime dependency
+- Improved logging in the weather client
+
+### Updated
+- Project dependencies
+- Platform queueing
+
+## [1.3.1] - 17-04-2021
+### Added
 - Additional logging
 
 ### Updated
