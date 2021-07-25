@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -14,6 +13,7 @@ using log4net;
 using Newtonsoft.Json;
 
 using SensateIoT.SmartEnergy.Dsmr.Processor.Common.Abstract;
+using SensateIoT.SmartEnergy.Dsmr.Processor.Common.DTO;
 using SensateIoT.SmartEnergy.Dsmr.Processor.Data.DTO;
 using SensateIoT.SmartEnergy.Dsmr.Processor.Data.Settings;
 
@@ -40,7 +40,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 
 		public async Task<IEnumerable<Measurement>> GetRangeAsync(string sensorId, DateTime start, DateTime end, CancellationToken ct)
 		{
-			IEnumerable<Measurement> data;
+			Response<IEnumerable<Measurement>> data;
 
 			var result = await this.m_client.GetAsync(this.buildLookupUri(sensorId, start, end), ct).ConfigureAwait(false);
 			var json = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -51,13 +51,13 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 			}
 
 			try {
-				data = JsonConvert.DeserializeObject<IEnumerable<Measurement>>(json);
+				data = JsonConvert.DeserializeObject<Response<IEnumerable<Measurement>>>(json);
 			} catch(SerializationException ex) {
 				logger.Error($"Unable to parse Data API response: {json}.", ex);
 				data = null;
 			}
 
-			return data;
+			return data?.Data;
 		}
 
 		public async Task DeleteBucketsAsync(string sensorId, DateTime start, DateTime end, CancellationToken ct)
@@ -85,7 +85,7 @@ namespace SensateIoT.SmartEnergy.Dsmr.Processor.Common.Services
 
 		private Uri buildDeleteUri(string sensorId, DateTime start, DateTime end)
 		{
-			var builder = new UriBuilder($"{this.m_config.SensateIoTDataApiBase}{LookupPath}");
+			var builder = new UriBuilder($"{this.m_config.SensateIoTDataApiBase}{DeletePath}");
 			var query = HttpUtility.ParseQueryString(builder.Query);
 
 			query["sensorId"] = sensorId;

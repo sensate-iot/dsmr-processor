@@ -61,6 +61,7 @@
     <Compile Include="Abstract\IProcessingService.cs" />
     <Compile Include="Abstract\IWeatherCache.cs" />
     <Compile Include="Abstract\IWeatherService.cs" />
+    <Compile Include="DTO\Response.cs" />
     <Compile Include="DTO\WeatherCacheValue.cs" />
     <Compile Include="DTO\WeatherLookup.cs" />
     <Compile Include="Logic\DataCalculator.cs" />
